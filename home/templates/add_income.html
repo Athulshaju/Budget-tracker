@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'add_income.css' %}">
+</head>
+<div class="form-wrapper">
+    <div class="form-container">
+        <form action="add_income" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Add Income">
+        </form>
+    </div>
+</div>
+{% endblock %}

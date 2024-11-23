@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Budget Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'home:dashboard_view' %}" style="text-decoration: none; color: inherit;"><h2>Budget Tracker</h2></a>
+                {% else %}
+                    <a href="{% url 'home:index' %}" style="text-decoration: none; color: inherit;"><h2>Budget Tracker</h2></a>
+                {% endif %}
+            </div>
+            <div class="auth-links">
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'home:profile_view' %}">Profile</a>
+                    <a href="{% url 'home:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'home:login' %}">Login</a>
+                    <a href="{% url 'home:register' %}">Register</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content specific to each page will be injected here -->
+        {% endblock %}
+    </main>
+
+   
+
+</body>
+</html>

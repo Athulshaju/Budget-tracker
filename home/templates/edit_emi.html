@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'edit_emi.css' %}">
+</head>
+<div class="form-container">
+    <h2>Edit EMI</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-btn">Update EMI</button>
+        <a href="{% url 'home:dashboard_view' %}" class="cancel-btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}

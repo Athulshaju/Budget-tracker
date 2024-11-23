@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Set smaller dimensions for the canvas */
+        canvas {
+            max-width: 300px;
+            max-height: 200px;
+            margin: 10px;
+        }
+
+        /* Flexbox for proper alignment */
+        div {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<div>
+    <canvas id="incomeChart"></canvas>
+    <canvas id="expenseChart"></canvas>
+    <canvas id="budgetChart"></canvas>
+    <canvas id="categoryChart"></canvas>
+</div>
+
+<script>
+    async function fetchChartData() {
+        try {
+            const response = await fetch('chart-data'); // Adjust the URL to your API endpoint
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            const incomeLabels = data.income_data.map(item => item.date);
+            const incomeValues = data.income_data.map(item => item.total);
+
+            const expenseLabels = data.expense_data.map(item => item.date);
+            const expenseValues = data.expense_data.map(item => item.total);
+
+            const budgetLabels = data.budget_data.map(item => item.category__name);
+            const budgetValues = data.budget_data.map(item => item.limit);
+
+            const categorySpendingLabels = data.category_spending.map(item => item.category__name);
+            const categorySpendingValues = data.category_spending.map(item => item.total);
+
+            renderIncomeChart(incomeLabels, incomeValues);
+            renderExpenseChart(expenseLabels, expenseValues);
+            renderBudgetChart(budgetLabels, budgetValues);
+            renderCategoryChart(categorySpendingLabels, categorySpendingValues);
+        } catch (error) {
+            console.error('Error fetching chart data:', error);
+        }
+    }
+
+    function renderIncomeChart(labels, data) {
+        const ctx = document.getElementById('incomeChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Income',
+                    data: data,
+                    borderColor: 'green',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                title: {
+                    display: true,
+                    text: 'Income Chart'
+                }
+            }
+        });
+    }
+
+    function renderExpenseChart(labels, data) {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: data,
+                    borderColor: 'red',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                title: {
+                    display: true,
+                    text: 'Expense Chart'
+                }
+            }
+        });
+    }
+
+    function renderBudgetChart(labels, data) {
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Budget Limit',
+                    data: data,
+                    backgroundColor: 'blue'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                title: {
+                    display: true,
+                    text: 'Budget Chart'
+                }
+            }
+        });
+    }
+
+    function renderCategoryChart(labels, data) {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Spending by Category',
+                    data: data,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                title: {
+                    display: true,
+                    text: 'Category Chart'
+                }
+            }
+        });
+    }
+
+    window.onload = fetchChartData;
+</script>
+{% endblock content %}

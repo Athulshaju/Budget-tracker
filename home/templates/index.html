@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<head>
+<link rel="stylesheet" href="{% static 'index.css' %}">
+
+</head>
+<div class="container">
+    <div class="header">
+      <h1>Track Your Expenses Easily</h1>
+      <p>Manage your finances and stay on top of your budget.</p>
+    </div>
+</div>
+  <div>
+    {% if not user.is_authenticated %}
+    <p align="center">Please login.</p>
+    {% endif %}
+  </div>
+
+{% endblock %}

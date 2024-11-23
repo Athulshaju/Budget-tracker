@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+</head>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="{% url 'home:dashboard_view' %}" class="active">Dashboard</a></li>
+                <li><a href="{% url 'home:add_budget' %}">Add Budget</a></li>
+                <li><a href="{% url 'home:add_income' %}">Add Income</a></li>
+                <li><a href="{% url 'home:add_expense' %}">Add Expense</a></li>
+                <li><a href="{% url 'home:add_emi' %}">Add EMI</a></li>
+                <li><a href="{% url 'home:charts_view' %}">Charts</a></li>
+                <li><a href="{% url 'home:generate_pdf' %}" class="btn btn-primary">Generate report</a>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Summary Section -->
+        <section class="summary">
+            <div class="summary-box">
+                <h3>Total Income</h3>
+                <p>₹{{ total_income }}</p>
+            </div>
+            <div class="summary-box">
+                <h3>Total Expense</h3>
+                <p>₹{{ total_expense }}</p>
+            </div>
+            <div class="summary-box">
+                <h3>Remaining Balance</h3>
+                <p>₹{{ remaining_balance }}</p>
+            </div>
+        </section>
+
+        <!-- Recent Transactions and EMI Reminder -->
+        <div class="flex-container">
+            <!-- Recent Transactions -->
+            <section class="transactions">
+                <div class="transactions-header">
+                    <h2>Recent Transactions</h2>
+                    <form method="get" class="filter-form">
+                        <div class="filter-controls">
+                            {{ income_filter.form }}
+                            <button type="submit" class="filter-btn">Apply Filter</button>
+                            <a href="{% url 'home:dashboard_view' %}" class="clear-btn">Clear Filter</a>
+                        </div>
+                    </form>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in recent_transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.type }}</td>
+                            <td>{{ transaction.category }}</td>
+                            <td>₹{{ transaction.amount }}</td>
+                            
+                            
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4">No recent transactions</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- EMI Reminder -->
+            <section class="emi-reminder">
+                <h2>EMI Reminders</h2>
+                {% for emi in emi_reminders %}
+                <div class="emi-card">
+                    <h3>{{ emi.name }}</h3>
+                    <p>Due Date: {{ emi.due_date }}</p>
+                    <p>Amount: ₹{{ emi.amount }}</p>
+                    <p>Description: {{ emi.description }}</p>
+                    <a href="{% url 'home:edit_emi' emi.id %}" class="edit-btn">Edit EMI</a>
+                </div>
+                {% empty %}
+                <p>No upcoming EMIs</p>
+                {% endfor %}
+            </section>
+        </div>
+    </main>
+</div>
+{% endblock %}
