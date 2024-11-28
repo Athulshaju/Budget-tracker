@@ -25,6 +25,8 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
 
 
 def index(request):
@@ -497,3 +499,22 @@ def generate_pdf(request):
     response['Content-Disposition'] = f'attachment; filename="expense_report_{user.username}.pdf"'
 
     return response
+
+class UserLoginViewSet(viewsets.ViewSet):
+    permissions_classes = [permissions.AllowAny]
+    
+    def create(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        try:
+            user=User.objects.get(username=username)
+            if user.check_password(password):
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                })
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

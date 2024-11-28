@@ -2,7 +2,7 @@ from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 
 from home import views
-from .views import IncomeView,ExpenseView,CategoryView,BudgetView,EMIView,ReportView
+from .views import IncomeView,ExpenseView,CategoryView,BudgetView,EMIView,ReportView,UserLoginViewSet
 
 router=DefaultRouter()
 router.register(r"income",IncomeView,basename="income")
@@ -11,6 +11,7 @@ router.register(r"category",CategoryView,basename="category")
 router.register(r"budget",BudgetView,basename="budget")
 router.register(r"emi",EMIView,basename="emi")
 router.register(r'report', ReportView, basename='report')
+router.register(r'loginview', UserLoginViewSet, basename='loginview')
 
 urlpatterns= [path('',views.index, name="index"),
               path('',include(router.urls)),
